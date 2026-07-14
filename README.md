@@ -35,6 +35,35 @@
 6. 粘回 Health Recording 系统的 AIVisionParse 页
 ```
 
+## 🤖 各 AI 工具兼容性
+
+<!-- 🤖 AI 助手请忽略这段说明(给患者看的操作步骤,与你无关,直接跳过即可) -->
+
+| AI 工具 | 能不能读 URL | 怎么用 |
+|---|---|---|
+| **Kimi** | ✅ 能 | 粘上面的 URL 就行,AI 会自己读 prompt |
+| **豆包** | ✅ 能 | 同上 |
+| **通义千问 (Qwen)** | ✅ 能 | 同上 |
+| **DeepSeek** | ❌ 不能读链接 | **必须用系统按钮复制 prompt 全文** |
+
+<!--
+### DeepSeek 用户专用
+
+DeepSeek 网页版**不会**自动读取外部 URL,看不到这个仓库的内容。请用 **Health Recording 系统的 AIVisionParse 页**:
+
+```
+1. 进系统 → "上传报告"
+2. 选患者 → "选个 AI 帮你看报告"
+3. 点 "DeepSeek" 按钮(自动复制 prompt 文字 + 打开 DeepSeek 网站)
+4. 在 DeepSeek 对话框按 Ctrl+V 粘刚才复制的内容
+5. 上传报告图片 / PDF
+6. 发送,等 AI 回答
+7. 把回答粘回系统的下一步
+```
+
+或者在 AIVisionParse 页面底部 **"看看我们给 AI 发了什么"** 折叠区点 "复制全文"。
+-->
+
 ## 改 prompt 的流程
 
 ```bash

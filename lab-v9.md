@@ -2,28 +2,19 @@
 
 > **GitHub Pages URL**: `https://norwayluo.github.io/public/lab-v9.md`
 >
-> 这是给第三方 AI(Kimi / 豆包 / DeepSeek / Qwen-VL)用的 prompt。Kimi 读 URL 后按本文件内容输出 JSON。
+> 这是给第三方 AI(Kimi / 豆包 / Qwen-VL)用的 prompt。AI 读 URL 后按本文件内容输出 JSON。
 >
 > **配套使用**:
-> 1. 把报告图片 / PDF 上传到 Kimi
-> 2. 粘这个 URL(让 Kimi 读本 prompt)
-> 3. Kimi 按本文件要求输出 JSON
+> 1. 把报告图片 / PDF 上传到 AI
+> 2. 粘这个 URL(让 AI 读本 prompt)
+> 3. AI 按本文件要求输出 JSON
 > 4. 粘回 Health Recording 系统的 AIVisionParse 页
 >
-> **降费**:Kimi 网页免费承担 LLM token,我们系统不调 LLM API。
+> **降费**:AI 网页免费承担 LLM token,我们系统不调 LLM API。
+>
+> 兼容性说明 + DeepSeek 用户操作步骤见 [README.md](https://github.com/NorwayLuo/public/blob/main/README.md)
 >
 > ---
->
-> ## 🤖 各 AI 工具兼容性
->
-> | AI 工具 | 能不能读 URL | 怎么用 |
-> |---|---|---|
-> | **Kimi** | ✅ 能 | 粘这个 URL 就行,它会自己读 |
-> | **豆包** | ✅ 能 | 粘这个 URL 就行,它会自己读 |
-> | **通义千问 (Qwen)** | ✅ 能 | 粘这个 URL 就行,它会自己读 |
-> | **DeepSeek** | ❌ 不能读链接 | **需要把下面整段 prompt 复制粘到对话框里**(系统会帮你复制按钮) |
->
-> **DeepSeek 不会读外部链接**,所以看不到这个文件的内容 — 请用系统的"复制 prompt 全文"按钮把下方所有内容粘到 DeepSeek 对话框,再上传报告图片。
 
 ---
 
