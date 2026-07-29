@@ -89,6 +89,19 @@
 9. **绝不"无中生有"造报告**（2026-07-17 v9.4 补，对照 1 份扫描件 PDF 触发的幻觉案例）：
    - **反面案例 4（造报告）**：1 份扫描件 PDF 文本提取为空，AI 没识别出内容却自己造了 1 份"JC 深圳医院 2026-06-25"的报告填进 `reports[]`，日期/医院/医生全部编造。
    - 规则：**读不到的 PDF 宁可输出空 `reports: []`，也不要造任何报告**。识别完成后，必须对照 PDF 核对：每份输出报告的 `hospitalName` / `reportDate` / `patientName` 必须在原 PDF 文本里能直接找到原文，找不到就删除该 report。
+10. **sampleType 必须规范化**（2026-07-29 v9.7 补，根治跨标本错配）：
+    - 只允许输出以下规范值之一：`SerPl`（血清/血浆） / `Bld`（全血） / `Urine`（尿液） / `CSF`（脑脊液） / `Stool`（粪便）
+    - **严禁**输出 `血清1` / `serum` / `blood` / `血液` / `尿` 等非规范值
+    - 24h 尿液报告（24小时尿蛋白/24小时尿电解质/尿沉渣）必须 `sampleType='Urine'`
+    - 血清生化报告（肝功/肾功/电解质/血脂/血糖）必须 `sampleType='SerPl'`
+    - 血常规报告必须 `sampleType='Bld'`
+    - 找不到标本类型时填 `null`（由系统按 panelName 推断）
+    - **反面案例 7**：24h 尿液电解质浓度报告（钾 38.2 mmol/L，正常尿钾 25-100），AI 没输出 sampleType，系统按 alias 全局匹配到血清 k（参考范围 3.5-5.3）→ 错配，触发假危急值告警 + 趋势图跳变 12 倍
+11. **标本隔离**（2026-07-29 v9.7 补，与铁律 4 配合）：
+    - 一份报告只允许一种 sampleType；不同 sampleType 的指标必须拆成不同 `reports[]` 元素
+    - 例：同一天做了血生化（血清）+ 24h 尿蛋白（尿液）→ 必须输出 2 个 report 元素，各自 sampleType 不同
+    - 严禁把尿液指标（钾/钠/氯/钙/肌酐/尿素/尿酸/微量白蛋白等）塞进 `sampleType='SerPl'` 的 report
+    - **反面案例 8**：24h 尿液电解质报告（钾/钠/氯/钙 + 24h 尿总钾/钠/氯/钙）被合并进 `sampleType='血清'` 的肝功能 visit，系统按 alias 把"钾"匹配到血清 k，导致 4 条数据错配
 
 ---
 
@@ -138,7 +151,11 @@
   - 肾功: `creatinine` `urea` `uric_acid` `egfr` `cystatin_c`
   - 血脂: `tc` `tg` `hdl` `ldl`
   - 血糖: `glu`(空腹) `glu_2h`(餐后2h) `hba1c`
-  - 电解质: `na` `k` `cl` `ca` `p`
+  - 电解质(按标本区分，2026-07-29 v9.7 补，必须匹配):
+    - 血清/血浆(SerPl): `na` `k` `cl` `ca` `p`
+    - 24h 尿液总量(单位 mmol/24h): `urine_24h_k` `urine_24h_na` `urine_24h_cl` `urine_24h_ca`
+    - 24h 尿液浓度(单位 mmol/L): `urine_k_conc` `urine_na_conc` `urine_cl_conc` `urine_ca_conc`
+    - **注意**:同一份报告里"钾"可能指血清钾或尿钾，根据 sampleType/panelName 判断；24h 尿液报告里的"钾"(单位 mmol/L，不是 mmol/24h)是尿钾浓度，用 `urine_k_conc`
   - 尿常规: `urine_glu` `urine_pro` `urine_ket` `urine_bld` `urine_leu` `urine_sg`
   - 免疫: `hbsag` `hbsab` `hbeag` `hbeab` `hbcab`
 
@@ -291,6 +308,8 @@
 - [ ] 没有输出 `status` / `isAbnormal` 等衍生字段。
 - [ ] **6 字段表头元信息全部输出 key**（`patientName`/`patientSex`/`patientAge`/`sampleId`/`sampleTime`/`requestDoctor`），找不到的值填 `null`——**不能省略任何一个 key**。反面案例 4.5：豆包只填了 `patientName` 漏 5 字段。
 - [ ] **没有"无中生有"造报告**：每份输出报告的 `hospitalName` / `reportDate` / `patientName` 必须在原 PDF 文本里能直接找到原文，找不到就删除该 report。读不清的 PDF 宁可输出空 `reports: []`。
+- [ ] **`sampleType` 只使用了规范值**：`"SerPl"` / `"Bld"` / `"Urine"` / `"CSF"` / `"Stool"` 或 `null`，没有输出 `血清1` / `serum` 等非规范值。
+- [ ] **同一 report 内 sampleType 一致**：没有把尿液指标塞进血清 report，也没有把血清指标塞进尿液 report；不同标本的报告已拆成多个 report 元素。
 
 ### 9. 该医院历史格式特点
 (若上方为空，表示系统未从该医院历史报告学到任何格式数据 — 正常识别即可。报告上的格式与历史不符时，以本份报告为准。)
