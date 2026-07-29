@@ -8,7 +8,7 @@
 
 | 文件 | URL | 说明 |
 |---|---|---|
-| `lab-v9.md` | `https://norwayluo.github.io/public/lab-v9.md` | 化验 / 检查 / 生命体征 通用 prompt v9.0 |
+| `prompt.md` | `https://norwayluo.github.io/public/prompt.md` | 化验 / 检查 / 生命体征 通用 prompt v9.6 |
 
 ## 启用 GitHub Pages(必做,首次)
 
@@ -21,7 +21,7 @@
 5. 等 1-2 分钟,GitHub 会显示 "Your site is live at https://norwayluo.github.io/public/"
 
 完成后,prompt 文件的 URL 是:
-- `https://norwayluo.github.io/public/lab-v9.md`
+- `https://norwayluo.github.io/public/prompt.md`
 
 ## 在 Kimi 网页里用
 
@@ -29,7 +29,7 @@
 1. 打开 https://kimi.moonshot.cn/
 2. 上传报告图片或 PDF
 3. 在输入框粘 URL:
-   https://norwayluo.github.io/public/lab-v9.md
+   https://norwayluo.github.io/public/prompt.md
 4. (可选) 加一句:"按上面的 prompt 输出 JSON"
 5. Kimi 输出 JSON
 6. 粘回 Health Recording 系统的 AIVisionParse 页
@@ -68,7 +68,7 @@ DeepSeek 网页版**不会**自动读取外部 URL,看不到这个仓库的内�
 
 ```bash
 # 1. 改完本地,跑测试
-git add lab-v9.md
+git add prompt.md
 git commit -m "improve: <说明>"
 git push origin main
 # 2. GitHub Pages 1-2 分钟自动重建
@@ -79,13 +79,13 @@ git push origin main
 
 1. **降费优先** — 系统不调 LLM API(费用由 Kimi 网页免费承担)
 2. **单源** — prompt 在 GitHub,系统代码不重复维护
-3. **版本管理** — `lab-v9.md` / `lab-v10.md` / `lab-v11.md` ... 用文件名做版本
+3. **版本管理** — `prompt.md` 统一文件名,用 §1 的版本号(v9.6 / v9.7 ...)做版本,不再用文件名做版本
 4. **细粒度拆分**(规划中) — 按 type 拆(化验 / 检查 / 生命体征),便于 A/B 对比
 5. **静态可读** — 纯文本,无 JS 动态渲染,Kimi 读得到
 
 ## 当前限制
 
-- `{{HOSPITAL_HINTS}}` 动态占位符在静态版本里不支持,改用文字说明(见 lab-v9.md 第 7 节)
+- `{{HOSPITAL_HINTS}}` 动态占位符在静态版本里不支持,改用文字说明(见 prompt.md 第 9 节)
 - 医院特定学习数据**不能放 GitHub**(隐私 + 通用性)— 系统单独维护
 
 ## 配套
