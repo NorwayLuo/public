@@ -102,6 +102,13 @@
     - 例：同一天做了血生化（血清）+ 24h 尿蛋白（尿液）→ 必须输出 2 个 report 元素，各自 sampleType 不同
     - 严禁把尿液指标（钾/钠/氯/钙/肌酐/尿素/尿酸/微量白蛋白等）塞进 `sampleType='SerPl'` 的 report
     - **反面案例 8**：24h 尿液电解质报告（钾/钠/氯/钙 + 24h 尿总钾/钠/氯/钙）被合并进 `sampleType='血清'` 的肝功能 visit，系统按 alias 把"钾"匹配到血清 k，导致 4 条数据错配
+12. **examMethod 检测方法**（2026-07-30 v9.8 补，区分同指标不同方法学）：
+    - 每条 `items[]` 必须输出 `examMethod` 字段，填报告原文标注的检测方法/方法学
+    - 常见值：`酶法` / `化学比浊法` / `免疫比浊法` / `电化学发光` / `化学发光免疫法` / `酶联免疫法` / `胶体金法` / `流式细胞法` / `放射免疫法` / `高效液相色谱法` / `干化学法` / `I-CLIA` / `Roche Cobas` 等
+    - 报告未标注检测方法时填 `null`（不要编造）
+    - **严禁**与检查报告的 `examMethod`(检查方式如"电子结肠镜")混淆 — LAB 的 examMethod 是化验方法学
+    - **反面案例 9**：同次肌酐检测，报告标注"酶法"和"苦味酸法"两个结果（参考范围不同），AI 没输出 examMethod → 系统按同指标同单位折叠去重，删了 1 条 → 趋势图丢失 1 个点，趋势断档
+    - 同一指标用不同检测方法（如肌酐的酶法 vs 苦味酸法、HbA1c 的 HPLC vs 免疫比浊法）必须各自输出，不能省略 `examMethod`
 
 ---
 
@@ -235,19 +242,19 @@
           "panelName": "肾功能", "rawName": "尿素", "standardKey": "urea",
           "valueText": "5.1", "valueNumeric": 5.1,
           "unit": "mmol/L", "refText": "1.7-8.3", "low": 1.7, "high": 8.3,
-          "flag": null, "confidence": 0.95 
+          "flag": null, "confidence": 0.95, "examMethod": "酶法"
         },
         { 
           "panelName": "尿常规", "rawName": "尿蛋白", "standardKey": "urine_pro",
           "valueText": "2+", "valueNumeric": null,
           "unit": "", "refText": "阴性", "low": null, "high": null,
-          "flag": null, "confidence": 0.95 
+          "flag": null, "confidence": 0.95, "examMethod": null
         },
         { 
           "panelName": "肾功能", "rawName": "肌酐", "standardKey": "creatinine",
           "valueText": "85", "valueNumeric": 85,
           "unit": "μmol/L", "refText": "男41-111/女44-97", "low": 41, "high": 111,
-          "flag": null, "confidence": 0.95 
+          "flag": null, "confidence": 0.95, "examMethod": "酶法"
         }
       ]
     },
@@ -310,6 +317,7 @@
 - [ ] **没有"无中生有"造报告**：每份输出报告的 `hospitalName` / `reportDate` / `patientName` 必须在原 PDF 文本里能直接找到原文，找不到就删除该 report。读不清的 PDF 宁可输出空 `reports: []`。
 - [ ] **`sampleType` 只使用了规范值**：`"SerPl"` / `"Bld"` / `"Urine"` / `"CSF"` / `"Stool"` 或 `null`，没有输出 `血清1` / `serum` 等非规范值。
 - [ ] **同一 report 内 sampleType 一致**：没有把尿液指标塞进血清 report，也没有把血清指标塞进尿液 report；不同标本的报告已拆成多个 report 元素。
+- [ ] **每条 item 都输出了 `examMethod`**：填报告原文标注的检测方法（酶法/化学比浊法/电化学发光等），报告未标注填 `null`，不要编造。同指标不同检测方法（如肌酐酶法 vs 苦味酸法）必须各自输出。
 
 ### 9. 该医院历史格式特点
 (若上方为空，表示系统未从该医院历史报告学到任何格式数据 — 正常识别即可。报告上的格式与历史不符时，以本份报告为准。)
